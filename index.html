@@ -3,156 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Store | أورتن ستور</title>
+  <title>Class Store | كلاس ستور</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* الستايل الأساسي للمتجر */
     :root {
       --bg-dark: #05080f; --top-blue: #5c85d6; --accent-orange: #ff9d00;
-      --card-bg: rgba(255, 255, 255, 0.02); --border-color: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(255, 255, 255, 0.02); --border-color: rgba(255, 255, 255, 0.1);
       --text-main: #ffffff; --text-muted: #a0aec0; --discord-blurple: #5865F2;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-    .top-bar { background: var(--top-blue); color: white; text-align: center; padding: 10px; font-size: 14px; font-weight: 700; }
-    header { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; background: rgba(5, 8, 15, 0.95); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+    /* واجهة الهبوط (القفل) */
+    #landing-page {
+      height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      background: radial-gradient(circle at center, #111d35 0%, #05080f 100%);
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; transition: 0.8s;
+    }
+    .lock-card {
+      text-align: center; padding: 50px; background: rgba(255,255,255,0.03); 
+      border: 1px solid var(--border-color); border-radius: 30px; backdrop-filter: blur(15px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 450px;
+    }
+    .logo-main { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px; border: 3px solid var(--accent-orange); }
     
-    nav a { color: var(--text-main); text-decoration: none; margin: 0 15px; font-weight: 600; cursor: pointer; }
-    .active-link { color: var(--accent-orange) !important; border-bottom: 2px solid var(--accent-orange); padding-bottom: 5px; }
-    
-    .container { max-width: 1200px; margin: auto; padding: 40px 20px; text-align: center; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; margin-top: 30px; }
-    .price-card { padding: 40px 20px; border-left: 1px solid var(--border-color); background: var(--card-bg); }
-    .price-card:last-child { border-left: none; }
-    
-    .btn-buy { width: 100%; padding: 12px; border-radius: 8px; background: transparent; color: white; cursor: pointer; font-weight: 700; border: 1px solid var(--discord-blurple); margin-top: 20px; }
+    .btn-connect {
+      background: var(--discord-blurple); color: white; padding: 15px 30px; border-radius: 12px;
+      font-weight: 800; border: none; cursor: pointer; font-size: 18px; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 25px;
+    }
+    .btn-connect:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4); }
+
+    /* محتوى المتجر (مخفي في البداية) */
+    #main-store { display: none; opacity: 0; transition: 1s; }
+
+    /* ستايل المتجر */
+    header { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; background: rgba(5, 8, 15, 0.9); border-bottom: 1px solid var(--border-color); }
+    .container { max-width: 1100px; margin: auto; padding: 50px 20px; text-align: center; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px; }
+    .price-card { padding: 40px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; }
+    .btn-buy { width: 100%; padding: 12px; border-radius: 8px; background: transparent; color: white; border: 1px solid var(--discord-blurple); cursor: pointer; font-weight: 700; margin-top: 20px; }
     .btn-buy:hover { background: var(--discord-blurple); }
     
-    .btn-login { background: var(--discord-blurple); color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; font-weight: 700; font-size: 13px; }
+    #user-tag { display: flex; align-items: center; gap: 10px; background: rgba(255,157,0,0.1); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--accent-orange); }
+    #user-img { width: 30px; height: 30px; border-radius: 50%; }
 
-    #user-display { display: flex; align-items: center; gap: 10px; color: var(--accent-orange); font-weight: 700; }
-    #user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-orange); background: #111; }
-    
-    .hidden { display: none; }
-    .fade-in { animation: fadeIn 0.8s ease; }
+    .fade-in { animation: fadeIn 0.8s forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <div id="main-content">
-    <div class="top-bar">مرحباً بك في أورتن ستور - استمتع بأفضل الخدمات</div>
-    <header>
-      <div id="auth-section">
-        <button id="login-btn" class="btn-login" onclick="handleLogin()">ربط حساب دسكورد</button>
-        <div id="user-display" class="hidden">
-          <img id="user-avatar" src="" alt="">
-          <span id="user-name">...</span>
-        </div>
-      </div>
+  <div id="landing-page">
+    <div class="lock-card">
+      <img src="https://cdn.discordapp.com/attachments/1483620716212654181/1484315609087868988/Logo_2.png?ex=69bdc822&is=69bc76a2&hm=fc50258d226af183d0862b13bea5fa8d28dd79e597c99f0d5928a90474ad0f4e&" class="logo-main" alt="Logo">
+      <h1 style="font-size: 28px; margin-bottom: 10px;">كلاس ستور</h1>
+      <p style="color: var(--text-muted); font-size: 15px; line-height: 1.6;">للدخول إلى المتجر ورؤية الأسعار، يجب عليك ربط حسابك بالديسكورد أولاً.</p>
+      
+      <button class="btn-connect" onclick="login()">
+        <span>ربط الحساب الآن</span>
+      </button>
+      <p id="status-msg" style="margin-top: 15px; font-size: 12px; color: var(--accent-orange);"></p>
+    </div>
+  </div>
 
-      <nav>
-        <a onclick="showSection('services')" id="nav-services">خدماتنا</a>
-        <a onclick="showSection('pricing')" id="nav-pricing" class="active-link">الأسعار</a>
-        <a onclick="showSection('policy')" id="nav-policy">السياسة</a>
+  <div id="main-store">
+    <header>
+      <div id="user-tag">
+        <img id="user-img" src="" alt="">
+        <span id="user-name" style="font-weight: 700; font-size: 14px;">...</span>
+      </div>
+      <nav style="display: flex; gap: 20px; font-weight: 600;">
+        <span style="color: var(--accent-orange); cursor: pointer;">الأسعار</span>
+        <span style="cursor: pointer; opacity: 0.6;">الخدمات</span>
+        <span style="cursor: pointer; opacity: 0.6;">السياسة</span>
       </nav>
-      <div style="font-weight: 800; font-size: 20px; color: var(--accent-orange);">أورتن</div>
+      <div style="font-size: 22px; font-weight: 900; color: var(--accent-orange);">كلاس</div>
     </header>
 
     <div class="container">
-      <div id="pricing-section" class="fade-in">
-        <h1 style="margin-bottom: 10px;">قائمة الأسعار</h1>
-        <p style="color: var(--text-muted);">اختر البوت المناسب لسيرفرك</p>
-        <div class="pricing-grid">
-          <div class="price-card"><h3>بوت تيكت</h3><div style="font-size:36px; font-weight:800; margin:15px 0;">9.99 <span>ر.س</span></div><button class="btn-buy" onclick="buyAction('Ticket Bot')">شراء الآن</button></div>
-          <div class="price-card"><h3>بوت ألعاب</h3><div style="font-size:36px; font-weight:800; margin:15px 0;">9.99 <span>ر.س</span></div><button class="btn-buy" onclick="buyAction('Games Bot')">شراء الآن</button></div>
-          <div class="price-card"><h3>البوت الصوتي</h3><div style="font-size:36px; font-weight:800; margin:15px 0;">1 <span>ر.س</span></div><button class="btn-buy" onclick="buyAction('Music Bot')">شراء الآن</button></div>
-        </div>
+      <h1 style="font-size: 35px;">قائمة المنتجات</h1>
+      <div class="pricing-grid">
+        <div class="price-card"><h3>بوت تيكت</h3><div style="font-size:40px; font-weight:800; margin:20px 0;">9.99 <span style="font-size:16px;">ر.س</span></div><button class="btn-buy" onclick="buy('Ticket Bot')">شراء</button></div>
+        <div class="price-card"><h3>بوت ألعاب</h3><div style="font-size:40px; font-weight:800; margin:20px 0;">9.99 <span style="font-size:16px;">ر.س</span></div><button class="btn-buy" onclick="buy('Games Bot')">شراء</button></div>
+        <div class="price-card"><h3>بوت صوتي</h3><div style="font-size:40px; font-weight:800; margin:20px 0;">1 <span style="font-size:16px;">ر.س</span></div><button class="btn-buy" onclick="buy('Music Bot')">شراء</button></div>
       </div>
-      
-      <div id="services-section" class="hidden fade-in"><h1>خدماتنا المميزة</h1><p style="margin-top:20px;">دعم فني 24/7 وحماية كاملة لسيرفرك.</p></div>
-      <div id="policy-section" class="hidden fade-in"><h1>سياسة المتجر</h1><p style="margin-top:20px;">جميع المبيعات نهائية لضمان الجودة.</p></div>
     </div>
   </div>
 
 <script>
   const CLIENT_ID = '1397247853163843625';
   const WEBHOOK_URL = 'https://discord.com/api/webhooks/1484314863219245116/IKrHGi-ibae9Qx52FOOv31SA79Qe4Lyp8tME75zaj4zIbNZYVaoasgOjuRdLjfnBPBXB';
-  let currentUser = null;
+  let user = null;
 
   window.onload = async () => {
     const fragment = new URLSearchParams(window.location.hash.slice(1));
-    let accessToken = fragment.get('access_token');
-    const savedToken = localStorage.getItem('dc_token');
+    const token = fragment.get('access_token') || localStorage.getItem('dc_token');
 
-    if (accessToken) {
-      localStorage.setItem('dc_token', accessToken);
-      window.location.hash = ""; 
-      await fetchDiscordUser(accessToken);
-    } 
-    else if (savedToken) {
-      await fetchDiscordUser(savedToken);
+    if (token) {
+      document.getElementById('status-msg').innerText = "جاري التحقق من الحساب...";
+      await authUser(token);
     }
-    // ملاحظة: لو ما فيه توكن، ماراح يسوي شي، الموقع بيفتح عادي.
   };
 
-  async function fetchDiscordUser(token) {
+  async function authUser(token) {
     try {
-      const response = await fetch('https://discord.com/api/users/@me', {
+      const res = await fetch('https://discord.com/api/users/@me', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!response.ok) throw new Error("Expired");
-      currentUser = await response.json();
+      if (!res.ok) throw new Error();
       
-      // إخفاء زر تسجيل الدخول وإظهار صورة المستخدم
-      document.getElementById('login-btn').classList.add('hidden');
-      document.getElementById('user-display').classList.remove('hidden');
-      document.getElementById('user-name').innerText = currentUser.username;
-      document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+      user = await res.json();
+      localStorage.setItem('dc_token', token);
+      window.location.hash = "";
 
-      sendLogToDiscord("زائر مسجل دخول ✅", `المستخدم **${currentUser.username}** يتصفح المتجر.`);
-    } catch (err) {
+      // فتح الموقع بنجاح
+      document.getElementById('landing-page').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('landing-page').style.display = 'none';
+        document.getElementById('main-store').style.display = 'block';
+        document.getElementById('main-store').classList.add('fade-in');
+      }, 800);
+
+      document.getElementById('user-name').innerText = user.username;
+      document.getElementById('user-img').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+
+      log("دخول مكتمل ✅", `المستخدم **${user.username}** فتح المتجر بنجاح.`);
+    } catch {
       localStorage.removeItem('dc_token');
+      document.getElementById('status-msg').innerText = "فشل التحقق، يرجى إعادة المحاولة.";
     }
   }
 
-  function handleLogin() {
-    const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
-    const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify`;
-    window.location.href = authUrl;
+  function login() {
+    const redirect = encodeURIComponent(window.location.origin + window.location.pathname);
+    window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=identify`;
   }
 
-  function buyAction(item) {
-    if (!currentUser) {
-      alert("يرجى ربط حسابك بالدسكورد أولاً لإتمام عملية الشراء.");
-      handleLogin();
-      return;
-    }
-    const roomLink = "https://discord.com/channels/1470167369002385565/1480351180642062461";
-    sendLogToDiscord("طلب شراء 💰", `المستخدم **${currentUser.username}** يريد شراء: **${item}**`);
-    window.location.href = roomLink;
+  function buy(item) {
+    const room = "https://discord.com/channels/1470167369002385565/1480351180642062461";
+    log("طلب شراء 💰", `المستخدم **${user.username}** طلب: **${item}**`);
+    window.location.href = room;
   }
 
-  function showSection(sectionId) {
-    ['pricing', 'services', 'policy'].forEach(s => {
-      document.getElementById(s + '-section').classList.add('hidden');
-      document.getElementById('nav-' + s).classList.remove('active-link');
-    });
-    document.getElementById(sectionId + '-section').classList.remove('hidden');
-    document.getElementById('nav-' + sectionId).classList.add('active-link');
-  }
-
-  function sendLogToDiscord(action, message) {
+  function log(title, msg) {
     fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         embeds: [{
-          title: action,
-          description: message,
-          color: 5814783,
-          thumbnail: currentUser ? { url: `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png` } : null,
+          title: title, description: msg, color: 5814783,
+          thumbnail: user ? { url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` } : null,
           timestamp: new Date()
         }]
       })
